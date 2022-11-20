@@ -512,9 +512,11 @@ void BinarySearchTree<Key, Value>::removePointer(Node<Key, Value>* rem) {
             root_ = rem->getLeft();
             root_->setParent(NULL);
         } else {
-            parent->setLeft(rem->getLeft());
+            if (parent->getLeft() == rem) parent->setLeft(rem->getLeft());
+            else parent->setRight(rem->getLeft());
             rem->getLeft()->setParent(parent);
         }
+        delete rem;
     }
     // only one child - right
     else if (rem->getRight() != NULL) {
@@ -522,9 +524,11 @@ void BinarySearchTree<Key, Value>::removePointer(Node<Key, Value>* rem) {
             root_ = rem->getRight();
             root_->setParent(NULL);
         } else {
-            parent->setRight(rem->getRight());
+            if (parent->getLeft() == rem) parent->setLeft(rem->getRight());
+            else parent->setRight(rem->getRight());
             rem->getRight()->setParent(parent);
         }
+        delete rem;
     }
     // no children
     else {
@@ -534,8 +538,8 @@ void BinarySearchTree<Key, Value>::removePointer(Node<Key, Value>* rem) {
             if (parent->getLeft() == rem) parent->setLeft(NULL);
             else parent->setRight(NULL);
         }
+        delete rem;
     }
-    delete rem;
 }
 
 
