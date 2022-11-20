@@ -457,7 +457,10 @@ void BinarySearchTree<Key, Value>::insert(const std::pair<const Key, Value> &key
     } else {
         Node<Key, Value>* curr = root_;
         while (curr != NULL) {
-            if (curr->getKey() == keyValuePair.first) curr->setValue(keyValuePair.second);
+            if (curr->getKey() == keyValuePair.first) {
+                curr->setValue(keyValuePair.second);
+                return;
+            }
             else if (curr->getKey() > keyValuePair.first) {
                 Node<Key, Value>* next = curr->getLeft();
                 if (next == NULL) {
@@ -489,27 +492,43 @@ void BinarySearchTree<Key, Value>::remove(const Key& key)
 {
     // TODO
     Node<Key, Value>* rem = internalFind(key);
+    if (rem == NULL) return;
     Node<Key, Value>* parent = rem->getParent();
-    if (parent == NULL) {
-        delete rem;
-        root_ = NULL;
-        return;
-    }
-    bool isLeftChild = key < parent->getKey();
-    if (rem->getLeft() == NULL && rem->getRight() == NULL) {
-        if (isLeftChild) parent->setLeft(NULL);
-        else parent->setRight(NULL);
-    } else if (rem->getLeft() == NULL) {
-        parent->setRight(rem->getRight());
-        rem->getRight()->setParent(parent);
-    } else if (rem->getRight() == NULL) {
-        parent->setLeft(rem->getLeft());
-        rem->getLeft()->setParent(parent);
-    } else {
+    // 2 children
+    if (rem->getLeft() != NULL && rem->getRight() != NULL) {
         // Swap with predecessor
         Node<Key, Value>* pred = predecessor(rem);
         nodeSwap(rem, pred);
-        pred->setLeft(NULL);
+        remove(key);
+    }
+    // only one child - left
+    else if (rem->getLeft() != NULL) {
+        if (rem == root_) {
+            root_ = rem->getLeft();
+            root_->setParent(NULL);
+        } else {
+            parent->setLeft(rem->getLeft());
+            rem->getLeft()->setParent(parent);
+        }
+    }
+    // only one child - right
+    else if (rem->getRight() != NULL) {
+        if (rem == root_) {
+            root_ = rem->getRight();
+            root_->setParent(NULL);
+        } else {
+            parent->setRight(rem->getRight());
+            rem->getRight()->setParent(parent);
+        }
+    }
+    // no children
+    else {
+        if (rem == root_) {
+            root_ = NULL;
+        } else {
+            if (parent->getLeft() == rem) parent->setLeft(NULL);
+            else parent->setRight(NULL);
+        }
     }
     delete rem;
 }
@@ -636,7 +655,7 @@ bool BinarySearchTree<Key, Value>::isBalanced() const
 }
 
 template<typename Key, typename Value>
-static int balanceRecurse(Node<Key, Value>* current) {
+int BinarySearchTree<Key, Value>::balanceRecurse(Node<Key, Value>* current) {
     if (current == NULL) return 0;
     int left = balanceRecurse(current->getLeft());
     int right = balanceRecurse(current->getRight());
