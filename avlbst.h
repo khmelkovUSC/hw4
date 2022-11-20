@@ -168,7 +168,7 @@ void AVLTree<Key, Value>::insert (const std::pair<const Key, Value> &new_item)
                 if (next == NULL) {
                     curr->setLeft(new AVLNode<Key, Value>(new_item.first, new_item.second, curr));
                     curr->updateBalance(-1);
-                    if (curr->getBalance() == 0) insertFix(curr, curr->getLeft());
+                    if (curr->getBalance() != 0) insertFix(curr, curr->getLeft());
                     return;
                 }
                 else curr = next;
@@ -178,7 +178,7 @@ void AVLTree<Key, Value>::insert (const std::pair<const Key, Value> &new_item)
                 if (next == NULL) {
                     curr->setRight(new AVLNode<Key, Value>(new_item.first, new_item.second, curr));
                     curr->updateBalance(1);
-                    if (curr->getBalance() == 0) insertFix(curr, curr->getRight());
+                    if (curr->getBalance() != 0) insertFix(curr, curr->getRight());
                     return;
                 }
                 else curr = next;
@@ -260,6 +260,7 @@ void AVLTree<Key, Value>::rotateRight(AVLNode<Key,Value>* n) {
     AVLNode<Key,Value>* newNLeftChild = newParent->getRight();
     if (n == this->root_) {
         this->root_ = newParent;
+        newParent->setParent(NULL);
     }
     else {
         AVLNode<Key,Value>* grandparent = n->getParent();
@@ -274,7 +275,7 @@ void AVLTree<Key, Value>::rotateRight(AVLNode<Key,Value>* n) {
     newParent->setRight(n);
     n->setParent(newParent);
     n->setLeft(newNLeftChild);
-    newNLeftChild->setParent(n);
+    if (newNLeftChild != NULL) newNLeftChild->setParent(n);
 }
 
 template<class Key, class Value>
@@ -283,6 +284,7 @@ void AVLTree<Key, Value>::rotateLeft(AVLNode<Key,Value>* n) {
     AVLNode<Key,Value>* newNRightChild = newParent->getLeft();
     if (n == this->root_) {
         this->root_ = newParent;
+        newParent->setParent(NULL);
     }
     else {
         AVLNode<Key,Value>* grandparent = n->getParent();
@@ -297,7 +299,7 @@ void AVLTree<Key, Value>::rotateLeft(AVLNode<Key,Value>* n) {
     newParent->setLeft(n);
     n->setParent(newParent);
     n->setRight(newNRightChild);
-    newNRightChild->setParent(n);
+    if (newNRightChild != NULL) newNRightChild->setParent(n);
 }
 
 /*
