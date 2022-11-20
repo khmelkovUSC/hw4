@@ -351,8 +351,7 @@ void AVLTree<Key, Value>::removePointer(AVLNode<Key, Value>* rem) {
         if (rem == this->root_) {
             this->root_ = NULL;
         } else {
-            if (parent->getLeft() == rem) parent->setLeft(NULL);
-            else parent->setRight(NULL);
+            removeUpdateParent(NULL, rem, parent);
         }
         delete rem;
     }
