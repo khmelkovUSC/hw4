@@ -250,6 +250,7 @@ protected:
     static Node<Key, Value>* successor(Node<Key, Value>* current);
     static void delRecurse(Node<Key, Value>* current);
     static int balanceRecurse(Node<Key, Value>* current);
+    void removePointer(Node<Key, Value>* rem);
 
 protected:
     Node<Key, Value>* root_;
@@ -491,7 +492,11 @@ template<typename Key, typename Value>
 void BinarySearchTree<Key, Value>::remove(const Key& key)
 {
     // TODO
-    Node<Key, Value>* rem = internalFind(key);
+    removePointer(internalFind(key));
+}
+
+template<typename Key, typename Value>
+void BinarySearchTree<Key, Value>::removePointer(Node<Key, Value>* rem) {
     if (rem == NULL) return;
     Node<Key, Value>* parent = rem->getParent();
     // 2 children
@@ -499,7 +504,7 @@ void BinarySearchTree<Key, Value>::remove(const Key& key)
         // Swap with predecessor
         Node<Key, Value>* pred = predecessor(rem);
         nodeSwap(rem, pred);
-        remove(key);
+        removePointer(rem);
     }
     // only one child - left
     else if (rem->getLeft() != NULL) {
@@ -532,7 +537,6 @@ void BinarySearchTree<Key, Value>::remove(const Key& key)
     }
     delete rem;
 }
-
 
 
 template<class Key, class Value>
