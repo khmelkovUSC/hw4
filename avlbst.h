@@ -240,12 +240,12 @@ void AVLTree<Key, Value>::insertFix(AVLNode<Key,Value>* p, AVLNode<Key,Value>* n
                 rotateLeft(g);
                 if (n->getBalance() == 1) {
                     p->setBalance(0);
-                    g->setBalance(1);
+                    g->setBalance(-1);
                 } else if (n->getBalance() == 0) {
                     p->setBalance(0);
                     g->setBalance(0);
                 } else if (n->getBalance() == -1) {
-                    p->setBalance(-1);
+                    p->setBalance(1);
                     g->setBalance(0);
                 }
                 n->setBalance(0);
